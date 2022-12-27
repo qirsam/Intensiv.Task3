@@ -47,5 +47,11 @@ VALUES ('Paramount Pictures', '1912-05-01'),
        ('Universal Pictures', '1912-04-30');
 
 INSERT INTO actor(firstname, lastname, birthdate, sex)
-VALUES ('Henry', 'Cavil', '1983-05-05', 'male');
+VALUES ('Tom', 'Hardy', '1977-09-15', 'male'),
+       ('Jonny', 'Depp', '1963-06-09', 'male'),
+       ('Keanu', 'Reeves', '1964-09-08', 'male'),
+       ('Brad', 'Pitt', '1963-12-18', 'male'),
+       ('Matt', 'Daemon', '1970-10-08', 'male'),
+       ('Tom', 'Cruise', '1962-07-03', 'male'),
+       ('Robert', 'Downey Jr', '1965-04-04', 'male');
 
