@@ -1,4 +1,4 @@
-package com.qirsam.database.entity.utils;
+package com.qirsam.utils;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;

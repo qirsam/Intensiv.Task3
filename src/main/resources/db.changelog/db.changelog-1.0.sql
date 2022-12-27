@@ -12,11 +12,11 @@ CREATE TABLE IF NOT EXISTS studio
 --changeset qirsam:2
 CREATE TABLE IF NOT EXISTS actor
 (
-    id         SERIAL      NOT NULL PRIMARY KEY,
-    first_name VARCHAR(64) NOT NUll,
-    last_name  VARCHAR(64) NOT NUll,
-    birth_date DATE,
-    sex        VARCHAR(16)
+    id        SERIAL      NOT NULL PRIMARY KEY,
+    firstname VARCHAR(64) NOT NUll,
+    lastname  VARCHAR(64) NOT NUll,
+    birthdate DATE,
+    sex       VARCHAR(16)
 );
 --rollback DROP TABLE actor
 
@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS film
 --changeset qirsam:3
 CREATE TABLE IF NOT EXISTS actor_film
 (
-    id SERIAL NOT NULL PRIMARY KEY ,
-    actor_id BIGINT NOT NULL REFERENCES actor (id) ON DELETE CASCADE ,
-    film_id BIGINT NOT NULL REFERENCES film (id) ON DELETE CASCADE
+    id       SERIAL NOT NULL PRIMARY KEY,
+    actor_id BIGINT NOT NULL REFERENCES actor (id) ON DELETE CASCADE,
+    film_id  BIGINT NOT NULL REFERENCES film (id) ON DELETE CASCADE
 );
 
 INSERT INTO studio (name, date_of_foundation)
@@ -45,3 +45,7 @@ VALUES ('Paramount Pictures', '1912-05-01'),
        ('Sony Pictures', '1991-08-07'),
        ('Columbia Pictures', '1918-06-19'),
        ('Universal Pictures', '1912-04-30');
+
+INSERT INTO actor(firstname, lastname, birthdate, sex)
+VALUES ('Henry', 'Cavil', '1983-05-05', 'male');
+

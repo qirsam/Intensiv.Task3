@@ -1,4 +1,4 @@
-package com.qirsam.database.entity.utils;
+package com.qirsam.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
