@@ -1,0 +1,3 @@
+CREATE USER test;
+
+CREATE DATABASE filmi_db;

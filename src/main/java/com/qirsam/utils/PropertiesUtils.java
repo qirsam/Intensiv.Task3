@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public final class PropertiesUtils {
-    private static final Properties PROPERTIES = new Properties();
+    private static Properties properties;
 
     static {
         loadProperties();
@@ -16,12 +16,17 @@ public final class PropertiesUtils {
     }
 
     public static String get(String key) {
-        return PROPERTIES.getProperty(key);
+        return properties.getProperty(key);
+    }
+
+    public static void setProperties(Properties pr){
+        properties = pr;
     }
 
     private static void loadProperties() {
+        properties = new Properties();
         try (InputStream inputStream = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties")) {
-            PROPERTIES.load(inputStream);
+            properties.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException();
         }

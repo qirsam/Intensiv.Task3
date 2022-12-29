@@ -1,14 +1,26 @@
 package com.qirsam.database.dao;
 
+import com.qirsam.IntegrationTestBase;
+import com.qirsam.database.entity.Actor;
+import com.qirsam.utils.ConnectionPool;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.sql.Connection;
+import java.util.Optional;
 
-class ActorDaoTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class ActorDaoTest extends IntegrationTestBase {
 
     @Test
     void findById() {
+        Connection connection = ConnectionPool.get  ();
+        Optional<Actor> mayBeResult = ActorDao.getInstance().findById(1L, connection);
+
+        org.junit.jupiter.api.Assertions.assertTrue(mayBeResult.isPresent());
+        mayBeResult.ifPresent(actor -> assertEquals(actor.getFirstname(), "Tom"));
     }
 
     @Test
