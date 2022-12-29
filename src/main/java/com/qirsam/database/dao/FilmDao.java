@@ -1,91 +1,90 @@
 package com.qirsam.database.dao;
 
-import com.qirsam.database.entity.Actor;
+import com.qirsam.database.entity.Film;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ActorDao implements CrudDao<Long, Actor> {
+public class FilmDao implements CrudDao<Long, Film> {
 
-    private static final ActorDao INSTANCE = new ActorDao();
+    private static final FilmDao INSTANCE = new FilmDao();
+    private static final StudioDao studioDao = StudioDao.getInstance();
+
     private static final String FIND_ALL_SQL = """
-            SELECT actor.id,
-                firstname,
-                lastname,
-                birthdate,
-                sex
-            FROM actor
+            SELECT film.id,
+                   name,
+                   date_release,
+                   studio_id
+            FROM film
             """;
+
     private static final String FIND_BY_ID_SQL = FIND_ALL_SQL + """
             WHERE id = ?
             """;
 
     private static final String SAVE_SQL = """
-            INSERT INTO actor (firstname, lastname, birthdate, sex) 
-            VALUES (?,?,?,?)
+            INSERT INTO  film(name, date_release, studio_id) 
+            VALUES (?,?,?)
             """;
 
     private static final String UPDATE_SQL = """
-            UPDATE actor
-            SET firstname = ?,
-                lastname = ?,
-                birthdate = ?,
-                sex = ?
-            WHERE id = ?
+            UPDATE film
+            SET name = ?,
+                date_release = ?,
+                studio_id = ?
             """;
 
     private static final String DELETE_SQL = """
-            DELETE FROM actor
+            DELETE FROM film
             WHERE id = ?
             """;
 
-    private ActorDao() {
+    private FilmDao() {
     }
 
-    public static ActorDao getInstance() {
+    public static FilmDao getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public List<Actor> findAll(Connection connection) {
+    public List<Film> findAll(Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<Actor> actors = new ArrayList<>();
+            List<Film> films = new ArrayList<>();
 
             while (resultSet.next()) {
-                actors.add(buildActor(resultSet));
+                films.add(buildFilm(resultSet));
             }
-            return actors;
+            return films;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Optional<Actor> findById(Long id, Connection connection) {
+    public Optional<Film> findById(Long id, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            Actor actor = null;
+            Film film = null;
             if (resultSet.next()) {
-                actor = buildActor(resultSet);
+                film = buildFilm(resultSet);
             }
-            return Optional.ofNullable(actor);
+            return Optional.ofNullable(film);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Actor save(Actor entity, Connection connection) {
+    public Film save(Film entity, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, entity.getFirstname());
-            preparedStatement.setString(2, entity.getLastname());
-            preparedStatement.setDate(3, Date.valueOf(entity.getBirthDate()));
-            preparedStatement.setString(4, entity.getSex());
+            preparedStatement.setString(1, entity.getName());
+            preparedStatement.setDate(2, Date.valueOf(entity.getDateRelease()));
+            preparedStatement.setLong(3, entity.getStudio().getId());
 
             preparedStatement.executeUpdate();
 
@@ -100,18 +99,16 @@ public class ActorDao implements CrudDao<Long, Actor> {
     }
 
     @Override
-    public void update(Actor entity, Connection connection) {
+    public void update(Film entity, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
-            preparedStatement.setString(1, entity.getFirstname());
-            preparedStatement.setString(2, entity.getLastname());
-            preparedStatement.setDate(3, Date.valueOf(entity.getBirthDate()));
-            preparedStatement.setString(4, entity.getSex());
+            preparedStatement.setString(1, entity.getName());
+            preparedStatement.setDate(2, Date.valueOf(entity.getDateRelease()));
+            preparedStatement.setLong(3, entity.getStudio().getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -125,13 +122,12 @@ public class ActorDao implements CrudDao<Long, Actor> {
         }
     }
 
-    private Actor buildActor(ResultSet resultSet) throws SQLException {
-        return new Actor(
+    private Film buildFilm(ResultSet resultSet) throws SQLException {
+        return new Film(
                 resultSet.getLong("id"),
-                resultSet.getString("firstname"),
-                resultSet.getString("lastname"),
-                resultSet.getDate("birthdate").toLocalDate(),
-                resultSet.getString("sex")
-        );
+                resultSet.getString("name"),
+                resultSet.getDate("date_release").toLocalDate(),
+                studioDao.findById(resultSet.getLong("studio_id"),
+                        resultSet.getStatement().getConnection()).orElse(null));
     }
 }

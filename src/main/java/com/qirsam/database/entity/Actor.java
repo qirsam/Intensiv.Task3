@@ -1,6 +1,7 @@
 package com.qirsam.database.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 public class Actor {
@@ -9,6 +10,7 @@ public class Actor {
     private String lastname;
     private LocalDate birthDate;
     private String sex;
+    private List<ActorFilm> actorFilms;
 
     public Actor(Long id, String firstname, String lastname, LocalDate birthDate, String sex) {
         this.id = id;
@@ -56,6 +58,14 @@ public class Actor {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public List<ActorFilm> getActorFilms() {
+        return actorFilms;
+    }
+
+    public void setActorFilms(List<ActorFilm> actorFilms) {
+        this.actorFilms = actorFilms;
     }
 
     @Override

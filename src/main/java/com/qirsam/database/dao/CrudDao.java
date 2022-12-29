@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface CrudDao<K, E> {
 
-    Optional<E> findById(K id, Connection connection);
-
     List<E> findAll(Connection connection);
+
+    Optional<E> findById(K id, Connection connection);
 
     E save(E entity, Connection connection);
 

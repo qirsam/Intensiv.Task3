@@ -8,14 +8,13 @@ public class Film {
     private String name;
     private LocalDate dateRelease;
     private Studio studio;
-    private List<Actor> actors;
+    private List<ActorFilm> actorFilms;
 
-    public Film(Long id, String name, LocalDate dateRelease, Studio studio, List<Actor> actors) {
+    public Film(Long id, String name, LocalDate dateRelease, Studio studio) {
         this.id = id;
         this.name = name;
         this.dateRelease = dateRelease;
         this.studio = studio;
-        this.actors = actors;
     }
 
     public Long getId() {
@@ -50,12 +49,12 @@ public class Film {
         this.studio = studio;
     }
 
-    public List<Actor> getActors() {
-        return actors;
+    public List<ActorFilm> getActorFilms() {
+        return actorFilms;
     }
 
-    public void setActors(List<Actor> actors) {
-        this.actors = actors;
+    public void setActorFilms(List<ActorFilm> actorFilms) {
+        this.actorFilms = actorFilms;
     }
 
     @Override
@@ -65,7 +64,6 @@ public class Film {
                 ", name='" + name + '\'' +
                 ", dateRelease=" + dateRelease +
                 ", studio=" + studio +
-                ", actors=" + actors +
                 '}';
     }
 }
