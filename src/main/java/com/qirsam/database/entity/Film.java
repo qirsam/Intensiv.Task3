@@ -1,6 +1,7 @@
 package com.qirsam.database.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Film {
@@ -8,7 +9,7 @@ public class Film {
     private String name;
     private LocalDate dateRelease;
     private Studio studio;
-    private List<ActorFilm> actorFilms;
+    private List<ActorFilm> actorFilms = new ArrayList<>();
 
     public Film(Long id, String name, LocalDate dateRelease, Studio studio) {
         this.id = id;
