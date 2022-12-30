@@ -9,13 +9,14 @@ public class Film {
     private String name;
     private LocalDate dateRelease;
     private Studio studio;
-    private List<ActorFilm> actorFilms = new ArrayList<>();
+    private List<Actor> actors;
 
     public Film(Long id, String name, LocalDate dateRelease, Studio studio) {
         this.id = id;
         this.name = name;
         this.dateRelease = dateRelease;
         this.studio = studio;
+        this.actors = new ArrayList<>();
     }
 
     public Long getId() {
@@ -50,21 +51,21 @@ public class Film {
         this.studio = studio;
     }
 
-    public List<ActorFilm> getActorFilms() {
-        return actorFilms;
+    public List<Actor> getActors() {
+        return actors;
     }
 
-    public void setActorFilms(List<ActorFilm> actorFilms) {
-        this.actorFilms = actorFilms;
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
     }
 
     @Override
     public String toString() {
         return "Film{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", dateRelease=" + dateRelease +
-                ", studio=" + studio +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", dateRelease=" + dateRelease +
+               ", studio=" + studio +
+               '}';
     }
 }

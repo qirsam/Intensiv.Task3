@@ -11,7 +11,7 @@ public class Actor {
     private String lastname;
     private LocalDate birthDate;
     private String sex;
-    private List<ActorFilm> actorFilms;
+    private List<Film> films;
 
     public Actor(Long id, String firstname, String lastname, LocalDate birthDate, String sex) {
         this.id = id;
@@ -19,6 +19,7 @@ public class Actor {
         this.lastname = lastname;
         this.birthDate = birthDate;
         this.sex = sex;
+        this.films = new ArrayList<>();
     }
 
     public Long getId() {
@@ -61,12 +62,12 @@ public class Actor {
         this.sex = sex;
     }
 
-    public List<ActorFilm> getActorFilms() {
-        return actorFilms;
+    public List<Film> getFilms() {
+        return films;
     }
 
-    public void setActorFilms(List<ActorFilm> actorFilms) {
-        this.actorFilms = actorFilms;
+    public void setFilms(List<Film> films) {
+        this.films = films;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.qirsam.database.dao;
 
+import com.qirsam.database.entity.Actor;
 import com.qirsam.database.entity.Film;
 
 import java.sql.*;
@@ -34,11 +35,19 @@ public class FilmDao implements CrudDao<Long, Film> {
             SET name = ?,
                 date_release = ?,
                 studio_id = ?
+            WHERE id = ?
             """;
 
     private static final String DELETE_SQL = """
             DELETE FROM film
             WHERE id = ?
+            """;
+    private static final String FIND_ACTORS_BY_FILM_ID_SQL = """
+            SELECT a.id, firstname, lastname, birthdate, sex
+            FROM film
+            LEFT JOIN actor_film af on film.id = af.film_id
+            LEFT JOIN actor a on a.id = af.actor_id
+            WHERE film_id = ?
             """;
 
     private FilmDao() {
@@ -72,6 +81,7 @@ public class FilmDao implements CrudDao<Long, Film> {
             Film film = null;
             if (resultSet.next()) {
                 film = buildFilm(resultSet);
+                film.setActors(findActorsByFilmId(id, connection));
             }
             return Optional.ofNullable(film);
         } catch (SQLException e) {
@@ -104,6 +114,7 @@ public class FilmDao implements CrudDao<Long, Film> {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setDate(2, Date.valueOf(entity.getDateRelease()));
             preparedStatement.setLong(3, entity.getStudio().getId());
+            preparedStatement.setLong(4, entity.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -122,7 +133,23 @@ public class FilmDao implements CrudDao<Long, Film> {
         }
     }
 
-    private Film buildFilm(ResultSet resultSet) throws SQLException {
+    public List<Actor> findActorsByFilmId(Long id, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ACTORS_BY_FILM_ID_SQL)) {
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<Actor> actors = new ArrayList<>();
+            while (resultSet.next()) {
+                actors.add(ActorDao.getInstance().buildActor(resultSet));
+            }
+            return actors;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    protected Film buildFilm(ResultSet resultSet) throws SQLException {
         return new Film(
                 resultSet.getLong("id"),
                 resultSet.getString("name"),

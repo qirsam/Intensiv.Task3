@@ -3,13 +3,11 @@ package com.qirsam.database.dao;
 import com.qirsam.IntegrationTestBase;
 import com.qirsam.database.entity.Actor;
 import com.qirsam.utils.ConnectionPool;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ActorDaoTest extends IntegrationTestBase {

@@ -99,6 +99,7 @@ public class StudioDao implements CrudDao<Long, Studio> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, entity.getName());
             preparedStatement.setDate(2, Date.valueOf(entity.getDateOfFoundation()));
+            preparedStatement.setLong(3, entity.getId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
