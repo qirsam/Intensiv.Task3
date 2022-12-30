@@ -8,7 +8,9 @@ public class ActorFilm {
     public ActorFilm(Long id, Actor actor, Film film) {
         this.id = id;
         this.actor = actor;
+        this.actor.getActorFilms().add(this);
         this.film = film;
+        this.film.getActorFilms().add(this);
     }
 
     public Long getId() {
