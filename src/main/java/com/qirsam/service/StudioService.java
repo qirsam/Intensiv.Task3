@@ -47,4 +47,20 @@ public class StudioService {
             throw new RuntimeException(e);
         }
     }
+
+    public void update(Studio studio) {
+        try(Connection connection = ConnectionPool.get()) {
+            studioDao.update(studio, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean delete(Long id) {
+        try(Connection connection = ConnectionPool.get()) {
+            return studioDao.delete(id, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

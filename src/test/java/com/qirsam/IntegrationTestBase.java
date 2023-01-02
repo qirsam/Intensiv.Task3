@@ -1,7 +1,6 @@
 package com.qirsam;
 
 import com.qirsam.utils.PropertiesUtils;
-import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -14,7 +13,8 @@ import java.util.Properties;
 public abstract class IntegrationTestBase {
 
     @Container
-    static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.5");
+    static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.5")
+            .withInitScript("initialScript.sql");
 
     @BeforeAll
     static void startContainer() {
@@ -23,16 +23,6 @@ public abstract class IntegrationTestBase {
         properties.put("db.username", container.getUsername());
         properties.put("db.password", container.getPassword());
         PropertiesUtils.setProperties(properties);
-        container.withInitScript("initialScript.sql");
         container.start();
-        var flyway = Flyway.configure()
-                .locations("123/script1.sql")
-                .schemas("public")
-                .dataSource(container.getJdbcUrl(), container.getUsername(), container.getPassword())
-                .load();
-        flyway.info();
-        flyway.migrate();
     }
-
-
 }

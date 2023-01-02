@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qirsam.database.entity.Studio;
 import com.qirsam.service.StudioService;
+import com.qirsam.utils.RestRequest;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,32 +27,7 @@ public class StudioRestServlet extends HttpServlet {
             .addModule(new JavaTimeModule())
             .build();
 
-    private class RestRequest {
-        private Pattern regExIdPattern = Pattern.compile("/([0-9]*)");
-        private Long id;
 
-        public RestRequest(String pathInfo) throws ServletException {
-            if (pathInfo.equals("/")) {
-                return;
-            }
-
-            Matcher matcher = regExIdPattern.matcher(pathInfo);
-            if (matcher.find()) {
-                id = Long.parseLong(matcher.group(1));
-                return;
-            }
-
-            throw new ServletException("Invalid URI");
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -68,7 +45,7 @@ public class StudioRestServlet extends HttpServlet {
         }
 
         String json;
-        if (restRequest.getId() != null) {
+        if ((restRequest != null ? restRequest.getId() : null) != null) {
             Studio studioById = studioService.findById(restRequest.getId());
             json = jsonMapper.writeValueAsString(studioById);
         } else {
@@ -88,12 +65,65 @@ public class StudioRestServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try (BufferedReader reader = req.getReader()) {
-            Studio studio = jsonMapper.readValue(reader, Studio.class);
-            System.out.println(studio);
-            Studio savedStudio = studioService.save(studio);
+        RestRequest restRequest = null;
+        try {
+            restRequest = new RestRequest(req.getPathInfo());
+        } catch (ServletException e) {
+            resp.setStatus(400);
+            resp.resetBuffer();
+            e.printStackTrace();
+        }
+
+        if (restRequest.getId() == null) {
+            try (BufferedReader reader = req.getReader()) {
+                Studio studio = jsonMapper.readValue(reader, Studio.class);
+                Studio savedStudio = studioService.save(studio);
+                resp.sendRedirect("/api/v1/studios/" + savedStudio.getId());
+            }
+        } else {
             resp.setStatus(201);
-            resp.sendRedirect(req.getContextPath() + "/api/v1/studios/" + savedStudio.getId());
+            doGet(req, resp);
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RestRequest restRequest = null;
+        try {
+            restRequest = new RestRequest(req.getPathInfo());
+        } catch (ServletException e) {
+            resp.setStatus(400);
+            resp.resetBuffer();
+            e.printStackTrace();
+        }
+
+        if (restRequest.getId() != null) {
+            try (BufferedReader reader = req.getReader()) {
+                Studio studio = jsonMapper.readValue(reader, Studio.class);
+                studioService.update(studio);
+                doGet(req, resp);
+            }
+        } else {
+            resp.setStatus(404);
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RestRequest restRequest = null;
+        try {
+            restRequest = new RestRequest(req.getPathInfo());
+        } catch (ServletException e) {
+            resp.setStatus(400);
+            resp.resetBuffer();
+            e.printStackTrace();
+        }
+
+        if (restRequest.getId() != null) {
+            studioService.delete(restRequest.getId());
+            resp.sendRedirect("/api/v1/studios");
+        } else {
+            doGet(req, resp);
         }
     }
 }
