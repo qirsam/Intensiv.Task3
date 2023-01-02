@@ -18,7 +18,7 @@ class ActorDaoTest extends IntegrationTestBase {
         Optional<Actor> mayBeResult = ActorDao.getInstance().findById(1L, connection);
 
         org.junit.jupiter.api.Assertions.assertTrue(mayBeResult.isPresent());
-        mayBeResult.ifPresent(actor -> assertEquals(actor.getFirstname(), "motya"));
+       mayBeResult.ifPresent(actor -> assertEquals(actor.getFirstname(), "motya"));
     }
 
     @Test

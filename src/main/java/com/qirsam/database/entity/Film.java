@@ -14,6 +14,9 @@ public class Film {
     private Studio studio;
     private List<Actor> actors;
 
+    public Film() {
+    }
+
     public Film(Long id, String name, LocalDate dateRelease, Studio studio) {
         this.id = id;
         this.name = name;

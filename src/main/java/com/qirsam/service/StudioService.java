@@ -23,8 +23,7 @@ public class StudioService {
 
     public List<Studio> findAll(){
         try (Connection connection = ConnectionPool.get()) {
-            List<Studio> studios = studioDao.findAll(connection);
-            return studios;
+            return studioDao.findAll(connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -41,8 +40,7 @@ public class StudioService {
 
     public Studio save(Studio studio) {
         try (Connection connection = ConnectionPool.get()) {
-            Studio savedStudio = studioDao.save(studio, connection);
-            return savedStudio;
+            return studioDao.save(studio, connection);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

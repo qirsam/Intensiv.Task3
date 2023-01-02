@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.qirsam.database.entity.Studio;
 import com.qirsam.service.StudioService;
 import com.qirsam.utils.RestRequest;
+import com.qirsam.utils.UrlPath;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -19,14 +20,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(urlPatterns = "/api/v1/studios/*")
+@WebServlet(urlPatterns = UrlPath.STUDIOS_V1 + "*")
 public class StudioRestServlet extends HttpServlet {
 
     private final StudioService studioService = StudioService.getInstance();
     private final JsonMapper jsonMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
-
 
 
     @Override
@@ -52,6 +52,7 @@ public class StudioRestServlet extends HttpServlet {
             List<Studio> allStudios = studioService.findAll();
             json = jsonMapper.writeValueAsString(allStudios);
         }
+
         if (!json.equals("null")) {
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
@@ -74,11 +75,11 @@ public class StudioRestServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        if (restRequest.getId() == null) {
+        if ((restRequest != null ? restRequest.getId() : null) == null) {
             try (BufferedReader reader = req.getReader()) {
                 Studio studio = jsonMapper.readValue(reader, Studio.class);
                 Studio savedStudio = studioService.save(studio);
-                resp.sendRedirect("/api/v1/studios/" + savedStudio.getId());
+                resp.sendRedirect(UrlPath.STUDIOS_V1 + savedStudio.getId());
             }
         } else {
             resp.setStatus(201);
@@ -97,7 +98,7 @@ public class StudioRestServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        if (restRequest.getId() != null) {
+        if ((restRequest != null ? restRequest.getId() : null) != null) {
             try (BufferedReader reader = req.getReader()) {
                 Studio studio = jsonMapper.readValue(reader, Studio.class);
                 studioService.update(studio);
@@ -119,9 +120,9 @@ public class StudioRestServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        if (restRequest.getId() != null) {
+        if ((restRequest != null ? restRequest.getId() : null) != null) {
             studioService.delete(restRequest.getId());
-            resp.sendRedirect("/api/v1/studios");
+            resp.sendRedirect(UrlPath.STUDIOS_V1);
         } else {
             doGet(req, resp);
         }

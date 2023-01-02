@@ -22,6 +22,9 @@ public class Actor {
 
     private List<Film> films;
 
+    public Actor() {
+    }
+
     public Actor(Long id, String firstname, String lastname, LocalDate birthDate, String sex) {
         this.id = id;
         this.firstname = firstname;
