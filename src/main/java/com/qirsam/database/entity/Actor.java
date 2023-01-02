@@ -1,16 +1,25 @@
 package com.qirsam.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Actor {
+
     private Long id;
+
     private String firstname;
+
     private String lastname;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
+
     private String sex;
+
     private List<Film> films;
 
     public Actor(Long id, String firstname, String lastname, LocalDate birthDate, String sex) {

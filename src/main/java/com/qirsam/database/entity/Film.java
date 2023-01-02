@@ -1,5 +1,7 @@
 package com.qirsam.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +9,8 @@ import java.util.List;
 public class Film {
     private Long id;
     private String name;
-    private LocalDate dateRelease;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    LocalDate dateRelease;
     private Studio studio;
     private List<Actor> actors;
 

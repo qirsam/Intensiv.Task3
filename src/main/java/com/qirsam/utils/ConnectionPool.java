@@ -20,7 +20,16 @@ public class ConnectionPool {
     private static List<Connection> sourceConnections;
 
     static {
+        loadDrivers();
         initConnectionPool();
+    }
+
+    private static void loadDrivers() {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void initConnectionPool() {
@@ -62,7 +71,7 @@ public class ConnectionPool {
         }
     }
 
-    private static void closePool(){
+    private static void closePool() {
         for (Connection sourceConnection : sourceConnections) {
             try {
                 sourceConnection.close();
