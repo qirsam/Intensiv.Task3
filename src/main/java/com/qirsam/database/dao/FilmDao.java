@@ -50,6 +50,11 @@ public class FilmDao implements CrudDao<Long, Film> {
             WHERE film_id = ?
             """;
 
+    private static final String ADD_ACTORS_ID_BY_FILM_ID_SQL = """
+            INSERT INTO actor_film (actor_id, film_id) 
+            VALUES (?,?);
+            """;
+
     private FilmDao() {
     }
 
@@ -146,7 +151,23 @@ public class FilmDao implements CrudDao<Long, Film> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
 
+    public List<Actor> addActorsIdByFilmId(List<Actor> actors, Long filmId, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_ACTORS_ID_BY_FILM_ID_SQL)) {
+            List<Actor> resultActors = new ArrayList<>();
+            for (Actor actor : actors) {
+                preparedStatement.setLong(1, actor.getId());
+                preparedStatement.setLong(2, filmId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    resultActors.add(ActorDao.getInstance().buildActor(resultSet));
+                }
+            }
+            return resultActors;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected Film buildFilm(ResultSet resultSet) throws SQLException {

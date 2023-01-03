@@ -56,4 +56,12 @@ public class FilmService {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean delete(Long id){
+        try (Connection connection = ConnectionPool.get()) {
+            return filmDao.delete(id, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
