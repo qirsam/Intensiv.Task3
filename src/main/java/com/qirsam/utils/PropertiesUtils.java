@@ -19,12 +19,14 @@ public final class PropertiesUtils {
         return properties.getProperty(key);
     }
 
-    public static void setProperties(Properties pr){
+    public static void setProperties(Properties pr) {
         properties = pr;
     }
 
     private static void loadProperties() {
-        properties = new Properties();
+        if (properties == null) {
+            properties = new Properties();
+        }
         try (InputStream inputStream = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties")) {
             properties.load(inputStream);
         } catch (IOException e) {

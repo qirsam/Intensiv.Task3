@@ -31,6 +31,7 @@ public class StudioService {
 
     public Studio findById(Long id) {
         try (Connection connection = ConnectionPool.get()) {
+
             Optional<Studio> mayBeStudio = studioDao.findById(id, connection);
             return mayBeStudio.orElse(null);
         } catch (SQLException e) {

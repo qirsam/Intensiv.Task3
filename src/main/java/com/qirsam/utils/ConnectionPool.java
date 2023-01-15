@@ -18,6 +18,7 @@ public class ConnectionPool {
     private static final Integer DEFAULT_POOL_SIZE = 10;
     private static BlockingQueue<Connection> pool;
     private static List<Connection> sourceConnections;
+    private static boolean connectionFlag = false;
 
     static {
         loadDrivers();
@@ -32,7 +33,7 @@ public class ConnectionPool {
         }
     }
 
-    private static void initConnectionPool() {
+    public static void initConnectionPool() {
         String poolSize = PropertiesUtils.get(POOL_SIZE_KEY);
         int size = poolSize == null ? DEFAULT_POOL_SIZE : Integer.parseInt(poolSize);
         pool = new ArrayBlockingQueue<>(size);
@@ -49,6 +50,8 @@ public class ConnectionPool {
             pool.add(proxyConnection);
             sourceConnections.add(connection);
         }
+        connectionFlag = true;
+
     }
 
     public static Connection get() {
@@ -71,7 +74,7 @@ public class ConnectionPool {
         }
     }
 
-    private static void closePool() {
+    public static void closePool() {
         for (Connection sourceConnection : sourceConnections) {
             try {
                 sourceConnection.close();
@@ -79,5 +82,11 @@ public class ConnectionPool {
                 throw new RuntimeException(e);
             }
         }
+        connectionFlag = false;
+    }
+
+
+    public static boolean getConnectionFlag() {
+        return connectionFlag;
     }
 }

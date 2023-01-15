@@ -1,10 +1,17 @@
 
+DROP TABLE IF EXISTS studio;
+DROP TABLE IF EXISTS actor;
+DROP TABLE IF EXISTS film;
+DROP TABLE IF EXISTS actor_film;
+
 CREATE TABLE IF NOT EXISTS studio
 (
     id                 SERIAL       NOT NULL PRIMARY KEY,
     name               VARCHAR(128) NOT NULL,
     date_of_foundation DATE
 );
+
+SELECT SETVAL('studio_id_seq', (SELECT MAX(id) FROM studio));
 
 CREATE TABLE IF NOT EXISTS actor
 (
@@ -15,6 +22,8 @@ CREATE TABLE IF NOT EXISTS actor
     sex       VARCHAR(16)
 );
 
+SELECT SETVAL('actor_id_seq', (SELECT MAX(id) FROM actor));
+
 CREATE TABLE IF NOT EXISTS film
 (
     id           SERIAL                                          NOT NULL PRIMARY KEY,
@@ -23,6 +32,7 @@ CREATE TABLE IF NOT EXISTS film
     studio_id    BIGINT REFERENCES studio (id) ON DELETE CASCADE NOT NULL
 );
 
+SELECT SETVAL('film_id_seq', (SELECT MAX(id) FROM film));
 
 CREATE TABLE IF NOT EXISTS actor_film
 (
@@ -30,6 +40,8 @@ CREATE TABLE IF NOT EXISTS actor_film
     actor_id BIGINT NOT NULL REFERENCES actor (id) ON DELETE CASCADE,
     film_id  BIGINT NOT NULL REFERENCES film (id) ON DELETE CASCADE
 );
+
+SELECT SETVAL('actor_film_id_seq', (SELECT MAX(id) FROM actor_film));
 
 INSERT INTO studio (name, date_of_foundation)
 VALUES ('Paramount Pictures', '1912-05-01'),
