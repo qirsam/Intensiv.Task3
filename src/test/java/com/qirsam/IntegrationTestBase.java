@@ -14,7 +14,8 @@ public abstract class IntegrationTestBase {
 
     @BeforeEach
     void startContainer() {
-        PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.5")
+        PostgreSQLContainer<?> container = new
+                PostgreSQLContainer<>("postgres:14.5")
                 .withInitScript("initialScript.sql");
         container.start();
         Properties properties = new Properties();
