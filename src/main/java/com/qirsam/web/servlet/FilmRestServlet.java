@@ -2,9 +2,8 @@ package com.qirsam.web.servlet;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.qirsam.database.entity.Actor;
 import com.qirsam.database.entity.Film;
-import com.qirsam.service.ActorService;
+import com.qirsam.service.FilmService;
 import com.qirsam.utils.RestRequest;
 import com.qirsam.utils.UrlPath;
 
@@ -19,20 +18,18 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Objects;
 
+@WebServlet(urlPatterns = UrlPath.FILMS_V1 + "*")
+public class FilmRestServlet extends HttpServlet {
 
-@WebServlet(urlPatterns = UrlPath.ACTORS_V1 + "*")
-public class ActorRestServlet extends HttpServlet {
-
-    private static final ActorService actorService = ActorService.getInstance();
+    private static final FilmService filmService = FilmService.getInstance();
     private final JsonMapper jsonMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RestRequest restRequest = null;
         PrintWriter out = resp.getWriter();
         String pathInfo = req.getPathInfo();
+        RestRequest restRequest = null;
         try {
             restRequest = new RestRequest(pathInfo);
         } catch (NumberFormatException e) {
@@ -46,19 +43,15 @@ public class ActorRestServlet extends HttpServlet {
         }
 
         String json;
-        if (pathInfo != null &&
-                pathInfo.equals("/" + Objects.requireNonNull(restRequest).getId() + UrlPath.SUB_FILMS)) {
-            List<Film> filmsByActorId = actorService.findFilmsByActorId(restRequest.getId());
-            json = jsonMapper.writeValueAsString(filmsByActorId);
-        } else if (restRequest.getId() != null) {
-            Actor actorById = actorService.findById(restRequest.getId());
-            json = jsonMapper.writeValueAsString(actorById);
+        if (pathInfo != null && pathInfo.equals("/" + Objects.requireNonNull(restRequest).getId())){
+            Film filmById = filmService.findById(restRequest.getId());
+            json = jsonMapper.writeValueAsString(filmById);
         } else {
-            List<Actor> allActors = actorService.findAll();
-            json = jsonMapper.writeValueAsString(allActors);
+            List<Film> films = filmService.findAll();
+            json = jsonMapper.writeValueAsString(films);
         }
 
-        if (!json.equals("null")    ) {
+        if (!json.equals("null")) {
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
             out.write(json);
@@ -74,17 +67,20 @@ public class ActorRestServlet extends HttpServlet {
         RestRequest restRequest = null;
         try {
             restRequest = new RestRequest(req.getPathInfo());
+        } catch (NumberFormatException e) {
+            resp.setStatus(404);
+            return;
         } catch (ServletException e) {
             resp.setStatus(400);
             resp.resetBuffer();
             e.printStackTrace();
         }
 
-        if (Objects.requireNonNull(restRequest).getId() == null) {
+        if ((restRequest != null ? restRequest.getId() : null) == null) {
             try (BufferedReader reader = req.getReader()) {
-                Actor actor = jsonMapper.readValue(reader, Actor.class);
-                Actor savedActor = actorService.save(actor);
-                resp.sendRedirect(UrlPath.ACTORS_V1 + savedActor.getId());
+                Film film = jsonMapper.readValue(reader, Film.class);
+                Film savedFilm = filmService.save(film);
+                resp.sendRedirect(UrlPath.FILMS_V1 + savedFilm.getId());
             }
         } else {
             resp.setStatus(201);
@@ -98,16 +94,19 @@ public class ActorRestServlet extends HttpServlet {
         RestRequest restRequest = null;
         try {
             restRequest = new RestRequest(req.getPathInfo());
+        } catch (NumberFormatException e) {
+            resp.setStatus(404);
+            return;
         } catch (ServletException e) {
             resp.setStatus(400);
             resp.resetBuffer();
             e.printStackTrace();
         }
 
-        if (Objects.requireNonNull(restRequest).getId() != null) {
-            try(BufferedReader reader = req.getReader()) {
-                Actor actor = jsonMapper.readValue(reader, Actor.class);
-                actorService.update(actor);
+        if ((restRequest != null ? restRequest.getId() : null) != null) {
+            try (BufferedReader reader = req.getReader()) {
+                Film film = jsonMapper.readValue(reader, Film.class);
+                filmService.update(film);
                 doGet(req, resp);
             }
         } else {
@@ -120,15 +119,18 @@ public class ActorRestServlet extends HttpServlet {
         RestRequest restRequest = null;
         try {
             restRequest = new RestRequest(req.getPathInfo());
+        } catch (NumberFormatException e) {
+            resp.setStatus(404);
+            return;
         } catch (ServletException e) {
             resp.setStatus(400);
             resp.resetBuffer();
             e.printStackTrace();
         }
 
-        if (Objects.requireNonNull(restRequest).getId() != null) {
-            actorService.delete(restRequest.getId());
-            resp.sendRedirect(UrlPath.ACTORS_V1);
+        if ((restRequest != null ? restRequest.getId() : null) != null) {
+            filmService.delete(restRequest.getId());
+            resp.sendRedirect(UrlPath.FILMS_V1);
         } else {
             doGet(req, resp);
         }

@@ -15,7 +15,7 @@ public class RestRequest {
 
         Matcher matcher = regExIdPattern.matcher(pathInfo);
         if (matcher.find()) {
-            id = Long.parseLong(matcher.group(1));
+                id = Long.parseLong(matcher.group(1));
             return;
         }
 
