@@ -89,8 +89,11 @@ class ActorDaoTest extends IntegrationTestBase {
         try (Connection connection = ConnectionPool.get()) {
 
             boolean result = actorDao.delete(TEST_ACTOR_ID, connection);
+            List<Actor> listResult = actorDao.findAll(connection);
 
             assertThat(result).isTrue();
+            assertThat(listResult)
+                    .hasSize(ACTORS_SIZE - 1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

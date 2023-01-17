@@ -11,26 +11,27 @@ import java.util.Properties;
 
 public abstract class IntegrationTestBase {
 
+    private final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.5")
+            .withInitScript("initialScript.sql");
 
     @BeforeEach
     void startContainer() {
-        PostgreSQLContainer<?> container = new
-                PostgreSQLContainer<>("postgres:14.5")
-                .withInitScript("initialScript.sql");
+
         container.start();
         Properties properties = new Properties();
         properties.put("db.url", container.getJdbcUrl());
         properties.put("db.username", container.getUsername());
         properties.put("db.password", container.getPassword());
         PropertiesUtils.setProperties(properties);
-        if (!ConnectionPool.getConnectionFlag()){
+        if (!ConnectionPool.getConnectionFlag()) {
             ConnectionPool.initConnectionPool();
         }
     }
 
     @AfterEach
-    void close(){
+    void close() {
         ConnectionPool.closePool();
+        container.stop();
     }
 
 

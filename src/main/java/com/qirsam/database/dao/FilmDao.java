@@ -153,18 +153,14 @@ public class FilmDao implements CrudDao<Long, Film> {
         }
     }
 
-    public List<Actor> addActorsIdByFilmId(List<Actor> actors, Long filmId, Connection connection) {
+    public void addActorsIdByFilmId(List<Actor> actors, Long filmId, Connection connection) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(ADD_ACTORS_ID_BY_FILM_ID_SQL)) {
-            List<Actor> resultActors = new ArrayList<>();
             for (Actor actor : actors) {
                 preparedStatement.setLong(1, actor.getId());
                 preparedStatement.setLong(2, filmId);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    resultActors.add(ActorDao.getInstance().buildActor(resultSet));
-                }
+                preparedStatement.executeUpdate();
+
             }
-            return resultActors;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
